@@ -1,139 +1,57 @@
-import React, {useState, useEffect, useMemo, useReducer} from 'react';
-import {View, ActivityIndicator} from 'react-native';
-import Main from './components/Main';
-import {NavigationContainer} from '@react-navigation/native';
-import RootStackScreen from './components/RootStackScreen';
-import {enableScreens} from 'react-native-screens';
-import {AuthContext} from './components/Context';
-import AsyncStorage from '@react-native-community/async-storage';
-//import Drawer1 from './components/Drawer1';
-//import Drawer2 from './components/Drawer2';
+import React, {useState} from 'react';
+import {View, StyleSheet, Text, FlatList} from 'react-native';
+import Header from './components/Header';
+import TodoItem from './components/TodoItem';
+import AddTodo from './components/AddTodo';
 
-//import {createDrawerNavigator} from '@react-navigation/drawer';
-
-//const RootDrawer = createDrawerNavigator();
-
-enableScreens();
-
-const App = () => {
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [userToken, setUserToken] = useState(null);
-
-  const initialLoginState = {
-    isLoading: true,
-    userName: null,
-    userToken: null
-  };
-
-  const loginReducer = (prevState, action) => {
-    switch(action.type) {
-      case 'RETRIEVE_TOKEN':
-        return {
-          ...prevState,
-          userToken: action.token,
-          isLoading: false,
-        };
-        case 'LOGIN':
-        return {
-          ...prevState,
-          userName: action.id,
-          userToken: action.token,
-          isLoading: false,
-        };
-        case 'LOGOUT':
-        return {
-          ...prevState,
-          userName: null,
-          userToken: null,
-          isLoading: false,
-        };
-        case 'REGISTER':
-        return {...prevState,
-          userName: action.id,
-          userToken: action.token,
-          isLoading: false,};
-
-    }
+export default function App() {
+  const [todos, setTodos] = useState([
+    {text: 'buy coffee', key: '1'},
+    {text: 'create an app', key: '2'},
+    {text: 'play on the switch', key: '3'},
+  ]);
+  const pressHandler = (key) => {
+      setTodos((prevTodos) => {
+          return prevTodos.filter(todo => todo.key != key)
+      })
   }
-
-  const [loginState, dispatch] = React.useReducer(loginReducer, initialLoginState);
-
-  const authContext = React.useMemo(() => ({
-    signIn: async(userName, password) => {
-      //setUserToken('fgkj');
-      //setIsLoading(false);
-      let userToken = null;
-       
-      
-      if( userName === 'user' && password === 'pass') {
-        userToken = 'dfgdfg';
-        console.log("SIGNTOKEN" + userToken);
-        try {
-          await AsyncStorage.setItem('userToken', userToken)
-        } catch(e) {
-          console.log(e);
-        }
-      }
-      dispatch({ type: 'LOGIN', id: userName, token: userToken });
-      console.log("user Token" + userToken);
-      console.log("username" + userName);
-      console.log("password" + password);
-    },
-    signOut: async() => {
-      // setUserToken('null');
-      // setIsLoading(false);
-      try {
-        await AsyncStorage.removeItem('userToken')
-        console.log("OUTTOKEN" + userToken);
-      } catch(e) {
-        console.log(e);
-      }
-      dispatch({type: 'LOGOUT'});
-    },
-    signUp: () => {
-      setUserToken('fgkj');
-      console.log("UPTOKEN" + userToken);
-      setIsLoading(false);
-    }
-  }), []);
-
-  useEffect(() => {
-    setTimeout(async() => {
-      //setIsLoading(false);
-      let userToken;
-      userToken = null;
-      try {
-        userToken = await AsyncStorage.getItem('userToken');
-      } catch(e) {
-        console.log(e);
-      }
-      console.log('user token', userToken);
-      dispatch({ type: 'REGISTER', token: userToken });
-    }, 1000)
-  }, []);
-
-  if( loginState.isLoading ) {
-    return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size="large" />
-    </View>
-    );
+  const submitHandler = (text) => {
+      setTodos((prevTodos) => {
+return [
+    { text: text, key: Math.random().toString()},
+    ...prevTodos
+]
+      })
   }
   return (
-    <AuthContext.Provider value={authContext}>
-    <NavigationContainer>
-      { loginState.userToken !== null ? (
-        <Main /> ):
-<RootStackScreen />  
-      }   
-    </NavigationContainer> 
-    </AuthContext.Provider>
+    <View style={styles.container}>
+      <Header />
+      <View style={styles.content}>
+       <AddTodo submitHandler={submitHandler}/>
+        <View style={styles.list}>
+          <Text>List</Text>
+          <FlatList
+            data={todos}
+            renderItem={({item}) => (
+                <TodoItem item = {item} pressHandler = {pressHandler}/>
+            // <Text>{item.text}</Text>
+            )}
+          />
+        </View>
+      </View>
+    </View>
   );
-};
-export default App;
+}
 
- {/* <RootDrawer.Navigator initialRouteName="Main">
-        <RootDrawer.Screen name="Main" component={Main} />
-        <RootDrawer.Screen name="Drawer1" component={Drawer1} />
-        <RootDrawer.Screen name="Drawer2" component={Drawer2} />
-      </RootDrawer.Navigator>*/}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  content: {
+    padding: 40,
+  },
+  list: {
+    marginTop: 20,
+  },
+});
