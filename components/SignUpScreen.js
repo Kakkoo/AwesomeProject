@@ -13,6 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
+import { AuthContext } from './Context';
 
 
 export default function SignInScreen({navigation}) {

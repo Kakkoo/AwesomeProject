@@ -1,20 +1,18 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
-import { AuthContext } from './Context';
 
-export default function Main({navigation}) {
-  const { signOut } = React.useContext(AuthContext);
+export default function Drawer1({navigation}) {
   return (
     <View>
         <Text>
-            Main page
+            Drawer one!
         </Text>
-        <TouchableOpacity onPress={() => { signOut()}}>
-          <LinearGradient colors={['#08d4c4', '#01ab9d']} >
-            <Text style="styles.textsign" >Sign out!</Text>
+        {/* <TouchableOpacity >
+          <LinearGradient colors={['#08d4c4', '#01ab9d']} style={{ color: '#fff'}}>
+            <Text >Drawer button</Text>
           </LinearGradient>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
     </View>
   )
 }
@@ -25,8 +23,5 @@ const styles = StyleSheet.create({
         marginTop: 40,
         backgroundColor: 'yellow'
         
-    },
-    textsign: {
-        color: 'white',
     }
 })
