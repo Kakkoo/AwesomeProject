@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Text, FlatList} from 'react-native';
+import {View, StyleSheet, Text, FlatList, Alert, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import Header from './components/Header';
 import TodoItem from './components/TodoItem';
 import AddTodo from './components/AddTodo';
+//import SandBox from './components/SandBox';
 
 export default function App() {
   const [todos, setTodos] = useState([
@@ -16,14 +17,23 @@ export default function App() {
       })
   }
   const submitHandler = (text) => {
+    if(text.length > 3){
       setTodos((prevTodos) => {
-return [
-    { text: text, key: Math.random().toString()},
-    ...prevTodos
-]
-      })
+        return [
+            { text: text, key: Math.random().toString()},
+            ...prevTodos
+        ]
+              })
+    } else {
+      Alert.alert('OOPS!', 'Todos must be over 3 chars long', [
+        {text: 'understood', onPress: () => console.log('alert closed')}
+      ])
+    }
+     
   }
   return (
+//<SandBox />
+    <TouchableWithoutFeedback onPress = {() => Keyboard.dismiss()}>
     <View style={styles.container}>
       <Header />
       <View style={styles.content}>
@@ -40,6 +50,7 @@ return [
         </View>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -53,5 +64,5 @@ const styles = StyleSheet.create({
   },
   list: {
     marginTop: 20,
-  },
+  }
 });
